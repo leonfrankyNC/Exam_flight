@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion Financière</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Gestion Financière</h1>
+
+        <!-- Section Fonds -->
+        <div class="card mb-4">
+            <div class="card-header">Ajouter des Fonds</div>
+            <div class="card-body">
+                <form id="fundForm">
+                    <div class="mb-3">
+                        <label for="fundAmount" class="form-label">Montant</label>
+                        <input type="number" class="form-control" id="fundAmount" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fundDescription" class="form-label">Description</label>
+                        <input type="text" class="form-control" id="fundDescription">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Ajouter</button>
+                </form>
+                <h5 class="mt-3">Solde actuel : <span id="balance">0</span> €</h5>
+                <table class="table mt-3">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Montant</th>
+                            <th>Description</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fundsTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section Types de Prêts -->
+        <div class="card mb-4">
+            <div class="card-header">Gérer les Types de Prêts</div>
+            <div class="card-body">
+                <form id="loanTypeForm">
+                    <div class="mb-3">
+                        <label for="loanTypeName" class="form-label">Nom</label>
+                        <input type="text" class="form-control" id="loanTypeName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="interestRate" class="form-label">Taux d'intérêt (%)</label>
+                        <input type="number" class="form-control" id="interestRate" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="maxDuration" class="form-label">Durée max (mois)</label>
+                        <input type="number" class="form-control" id="maxDuration" required>
+                    </div>
+                    <input type="hidden" id="loanTypeId">
+                    <button type="submit" class="btn btn-primary" id="loanTypeSubmit">Ajouter</button>
+                </form>
+                <table class="table mt-3">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Taux</th>
+                            <th>Durée Max</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="loanTypesTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section Clients -->
+        <div class="card mb-4">
+            <div class="card-header">Gérer les Clients</div>
+            <div class="card-body">
+                <form id="clientForm">
+                    <div class="mb-3">
+                        <label for="clientNom" class="form-label">Nom</label>
+                        <input type="text" class="form-control" id="clientNom" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="clientPrenom" class="form-label">Prénom</label>
+                        <input type="text" class="form-control" id="clientPrenom" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="clientEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="clientEmail" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Ajouter Client</button>
+                </form>
+                <table class="table mt-3">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientsTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Section Prêts -->
+        <div class="card mb-4">
+            <div class="card-header">Gérer les Prêts</div>
+            <div class="card-body">
+                <form id="loanForm">
+                    <div class="mb-3">
+                        <label for="loanClient" class="form-label">Client</label>
+                        <select class="form-control" id="loanClient" required></select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="loanType" class="form-label">Type de Prêt</label>
+                        <select class="form-control" id="loanType" required></select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="loanAmount" class="form-label">Montant</label>
+                        <input type="number" class="form-control" id="loanAmount" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="startDate" class="form-label">Date de début</label>
+                        <input type="date" class="form-control" id="startDate" required>
+                    </div>
+                    <input type="hidden" id="loanId">
+                    <button type="submit" class="btn btn-primary" id="loanSubmit">Ajouter Prêt</button>
+                </form>
+                <table class="table mt-3">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Client</th>
+                            <th>Type</th>
+                            <th>Montant</th>
+                            <th>Date</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="loansTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Charger les données initiales
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFunds();
+            loadLoanTypes();
+            loadClients();
+            loadLoans();
+        });
+
+        // Fonds
+        function loadFunds() {
+            fetch('/ws/funds')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('balance').textContent = data.balance || 0;
+                    const table = document.getElementById('fundsTable');
+                    table.innerHTML = '';
+                    data.funds.forEach(fund => {
+                        table.innerHTML += `
+                            <tr>
+                                <td>${fund.id}</td>
+                                <td>${fund.amount}</td>
+                                <td>${fund.description || ''}</td>
+                                <td>${new Date(fund.transaction_date).toLocaleDateString()}</td>
+                            </tr>`;
+                    });
+                });
+        }
+
+        document.getElementById('fundForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const amount = document.getElementById('fundAmount').value;
+            const description = document.getElementById('fundDescription').value;
+            fetch('/ws/funds', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount, description })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) alert(data.error);
+                    else {
+                        alert(data.message);
+                        loadFunds();
+                        document.getElementById('fundForm').reset();
+                    }
+                });
+        });
+
+        // Types de Prêts
+        function loadLoanTypes() {
+            fetch('/ws/loan_types')
+                .then(response => response.json())
+                .then(data => {
+                    const table = document.getElementById('loanTypesTable');
+                    const select = document.getElementById('loanType');
+                    table.innerHTML = '';
+                    select.innerHTML = '<option value="">Sélectionner</option>';
+                    data.forEach(type => {
+                        table.innerHTML += `
+                            <tr>
+                                <td>${type.id}</td>
+                                <td>${type.name}</td>
+                                <td>${type.interest_rate}%</td>
+                                <td>${type.max_duration} mois</td>
+                                <td>
+                                    <button class="btn btn-sm btn-warning" onclick="editLoanType(${type.id}, '${type.name}', ${type.interest_rate}, ${type.max_duration})">Modifier</button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteLoanType(${type.id})">Supprimer</button>
+                                </td>
+                            </tr>`;
+                        select.innerHTML += `<option value="${type.id}">${type.name}</option>`;
+                    });
+                });
+        }
+
+        function editLoanType(id, name, interest_rate, max_duration) {
+            document.getElementById('loanTypeId').value = id;
+            document.getElementById('loanTypeName').value = name;
+            document.getElementById('interestRate').value = interest_rate;
+            document.getElementById('maxDuration').value = max_duration;
+            document.getElementById('loanTypeSubmit').textContent = 'Modifier';
+        }
+
+        function deleteLoanType(id) {
+            if (confirm('Confirmer la suppression ?')) {
+                fetch(`/ws/loan_types/${id}`, { method: 'DELETE' })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        loadLoanTypes();
+                    });
+            }
+        }
+
+        document.getElementById('loanTypeForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const id = document.getElementById('loanTypeId').value;
+            const name = document.getElementById('loanTypeName').value;
+            const interest_rate = document.getElementById('interestRate').value;
+            const max_duration = document.getElementById('maxDuration').value;
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `/ws/loan_types/${id}` : '/ws/loan_types';
+            fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, interest_rate, max_duration })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) alert(data.error);
+                    else {
+                        alert(data.message);
+                        loadLoanTypes();
+                        document.getElementById('loanTypeForm').reset();
+                        document.getElementById('loanTypeSubmit').textContent = 'Ajouter';
+                        document.getElementById('loanTypeId').value = '';
+                    }
+                });
+        });
+
+        // Clients
+        function loadClients() {
+            fetch('/ws/clients')
+                .then(response => response.json())
+                .then(data => {
+                    const table = document.getElementById('clientsTable');
+                    const select = document.getElementById('loanClient');
+                    table.innerHTML = '';
+                    select.innerHTML = '<option value="">Sélectionner</option>';
+                    data.forEach(client => {
+                        table.innerHTML += `
+                            <tr>
+                                <td>${client.id}</td>
+                                <td>${client.nom}</td>
+                                <td>${client.prenom}</td>
+                                <td>${client.email}</td>
+                            </tr>`;
+                        select.innerHTML += `<option value="${client.id}">${client.nom} ${client.prenom}</option>`;
+                    });
+                });
+        }
+
+        document.getElementById('clientForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const nom = document.getElementById('clientNom').value;
+            const prenom = document.getElementById('clientPrenom').value;
+            const email = document.getElementById('clientEmail').value;
+            fetch('/ws/clients', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nom, prenom, email })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) alert(data.error);
+                    else {
+                        alert(data.message);
+                        loadClients();
+                        document.getElementById('clientForm').reset();
+                    }
+                });
+        });
+
+        // Prêts
+        function loadLoans() {
+            fetch('/ws/loans')
+                .then(response => response.json())
+                .then(data => {
+                    const table = document.getElementById('loansTable');
+                    table.innerHTML = '';
+                    data.forEach(loan => {
+                        table.innerHTML += `
+                            <tr>
+                                <td>${loan.id}</td>
+                                <td>${loan.nom} ${loan.prenom}</td>
+                                <td>${loan.loan_type_name}</td>
+                                <td>${loan.amount}</td>
+                                <td>${new Date(loan.start_date).toLocaleDateString()}</td>
+                                <td>${loan.status}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-warning" onclick="editLoan(${loan.id}, ${loan.client_id}, ${loan.loan_type_id}, ${loan.amount}, '${loan.start_date}', '${loan.status}')">Modifier</button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteLoan(${loan.id})">Supprimer</button>
+                                </td>
+                            </tr>`;
+                    });
+                });
+        }
+
+        function editLoan(id, client_id, loan_type_id, amount, start_date, status) {
+            document.getElementById('loanId').value = id;
+            document.getElementById('loanClient').value = client_id;
+            document.getElementById('loanType').value = loan_type_id;
+            document.getElementById('loanAmount').value = amount;
+            document.getElementById('startDate').value = start_date.split('T')[0];
+            document.getElementById('loanSubmit').textContent = 'Modifier';
+        }
+
+        function deleteLoan(id) {
+            if (confirm('Confirmer la suppression ?')) {
+                fetch(`/ws/loans/${id}`, { method: 'DELETE' })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        loadLoans();
+                    });
+            }
+        }
+
+        document.getElementById('loanForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const id = document.getElementById('loanId').value;
+            const client_id = document.getElementById('loanClient').value;
+            const loan_type_id = document.getElementById('loanType').value;
+            const amount = document.getElementById('loanAmount').value;
+            const start_date = document.getElementById('startDate').value;
+            const status = 'active';
+            const method = id ? 'PUT' : 'POST';
+            const url = id ? `/ws/loans/${id}` : '/ws/loans';
+            fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ client_id, loan_type_id, amount, start_date, status })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) alert(data.error);
+                    else {
+                        alert(data.message);
+                        loadLoans();
+                        document.getElementById('loanForm').reset();
+                        document.getElementById('loanSubmit').textContent = 'Ajouter Prêt';
+                        document.getElementById('loanId').value = '';
+                    }
+                });
+        });
+    </script>
+</body>
+</html>
