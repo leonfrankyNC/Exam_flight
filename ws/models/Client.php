@@ -17,8 +17,8 @@ class Client {
 
     public static function create($data) {
         $db = getDB();
-        $stmt = $db->prepare("INSERT INTO clients (nom, prenom, email) VALUES (?, ?, ?)");
-        $stmt->execute([$data->nom, $data->prenom, $data->email]);
+        $stmt = $db->prepare("INSERT INTO clients (last_name , first_name , email , age) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$data->last_name, $data->first_name, $data->email, $data->age]);
         return $db->lastInsertId();
     }
 }

@@ -1,24 +1,16 @@
 <?php
-require_once __DIR__ . '/../db.php';
+function getDB() {
+    $host = 'localhost';
+    $dbname = 'financial_institution';
+    $username = 'root';
+    $password = '';
 
-class Fund {
-    public static function add($amount, $description) {
-        $db = getDB();
-        $stmt = $db->prepare("INSERT INTO establishment_funds (amount, description) VALUES (?, ?)");
-        $stmt->execute([$amount, $description]);
-        return $db->lastInsertId();
-    }
-
-    public static function getAll() {
-        $db = getDB();
-        $stmt = $db->query("SELECT * FROM establishment_funds ORDER BY transaction_date DESC");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public static function getBalance() {
-        $db = getDB();
-        $stmt = $db->query("SELECT SUM(amount) as balance FROM establishment_funds");
-        return $stmt->fetch(PDO::FETCH_ASSOC)['balance'] ?? 0;
+    try {
+        return new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        ]);
+    } catch (PDOException $e) {
+        die(json_encode(['error' => $e->getMessage()]));
     }
 }
 ?>
